@@ -19,3 +19,10 @@ A small Python client is included to test the connection.
 4. Accept one client  
 5. Receive and print the message  
 6. Close the connection
+
+## TO RUN:
+```
+g++ -pthread simpleStramServer.cpp -o server
+
+./server
+```
