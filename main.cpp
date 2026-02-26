@@ -44,7 +44,7 @@ void handle_client(int* client_fd_ptr) {
     // 1. buffer bana lete h
     // 2. read krte h req
 
-    char buffer[2048] = {0};
+    char buffer[16384] = {0};
 
     int bytes_rec = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 
