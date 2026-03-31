@@ -7,7 +7,7 @@ Also recieves `POST` requests, returns the request body as response
 
 ## TO RUN:
 ```
-g++ -pthread main.cpp -o server
+make
 
-./server
+./server <root_dir> <port>
 ```
