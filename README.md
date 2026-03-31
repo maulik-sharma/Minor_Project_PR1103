@@ -10,4 +10,6 @@ Also recieves `POST` requests, returns the request body as response
 make
 
 ./server <root_dir> <port>
+
+Ex : ./server content/ 8080
 ```
