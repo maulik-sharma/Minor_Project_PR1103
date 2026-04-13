@@ -13,6 +13,7 @@ public:
 
     // Convenience builders
     static HttpResponse make_200(const std::string& body, const std::string& content_type);
+    static HttpResponse make_201(const std::string& location);
     static HttpResponse make_204();
     static HttpResponse make_400(const std::string& reason);
     static HttpResponse make_403(const std::string& reason);

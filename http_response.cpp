@@ -24,12 +24,18 @@ void HttpResponse::set_body(const std::string& content, const std::string& conte
     headers["Content-Length"] = std::to_string(content.size());
 }
 
-// --- Static convenience builders ---
-
 HttpResponse HttpResponse::make_200(const std::string& body, const std::string& content_type) {
     HttpResponse r;
     r.set_status(200, "OK");
     r.set_body(body, content_type);
+    return r;
+}
+
+HttpResponse HttpResponse::make_201(const std::string& location) {
+    HttpResponse r;
+    r.set_status(201, "Created");
+    r.set_header("Location", location);
+    r.set_body("201 Created: " + location, "text/plain");
     return r;
 }
 

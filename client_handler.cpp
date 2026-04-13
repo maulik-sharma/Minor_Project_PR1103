@@ -87,10 +87,22 @@ HttpResponse ClientHandler::handle_post(const HttpRequest& req) const {
     if (!req.has_header("Content-Length"))
         return HttpResponse::make_400("Missing Content-Length header");
 
-    std::cout << "\n--- POST body ---\n" << req.body << "\n-----------------" << std::endl;
+    std::string file_path = root_dir + req.path;
 
-    // Echo body back — replace this with real logic
-    return HttpResponse::make_200(req.body, "text/plain");
+    struct stat st;
+    if (stat(file_path.c_str(), &st) == 0)
+        return HttpResponse::make_400("File already exists. Use PATCH to update.");
+
+    std::ofstream file(file_path, std::ios::binary);
+    if (!file.is_open())
+        return HttpResponse::make_500("Could not create file");
+
+    file << req.body;
+    file.close();
+
+    std::cout << "\n--- POST created: " << file_path << " ---" << std::endl;
+
+    return HttpResponse::make_201(req.path);
 }
 
 HttpResponse ClientHandler::handle_head(const HttpRequest& req) const {
