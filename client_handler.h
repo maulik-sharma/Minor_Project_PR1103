@@ -24,4 +24,13 @@ private:
 
     // Handles POST — echoes body back (placeholder for real logic).
     HttpResponse handle_post(const HttpRequest& req) const;
+
+    // Handles HEAD requests by returning the same headers as GET but no body.
+    HttpResponse handle_head(const HttpRequest& req) const;
+
+    // Handles DELETE requests by removing the file.
+    HttpResponse handle_delete(const HttpRequest& req) const;
+
+    // Handles PATCH requests by appending the body to the file.
+    HttpResponse handle_patch(const HttpRequest& req) const;
 };

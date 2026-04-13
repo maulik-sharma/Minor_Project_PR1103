@@ -33,6 +33,12 @@ HttpResponse HttpResponse::make_200(const std::string& body, const std::string& 
     return r;
 }
 
+HttpResponse HttpResponse::make_204() {
+    HttpResponse r;
+    r.set_status(204, "No Content");
+    return r;
+}
+
 HttpResponse HttpResponse::make_400(const std::string& reason) {
     HttpResponse r;
     r.set_status(400, "Bad Request");
@@ -94,4 +100,9 @@ std::string HttpResponse::current_date() {
     char buf[128];
     strftime(buf, sizeof(buf), "%a, %d %b %Y %H:%M:%S GMT", &tm);
     return std::string(buf);
+}
+
+void HttpResponse::clear_body() {
+    body = "";
+    headers["Content-Length"] = "0";
 }

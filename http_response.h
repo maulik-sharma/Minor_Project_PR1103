@@ -9,9 +9,11 @@ public:
     void set_status(int code, const std::string& message);
     void set_header(const std::string& key, const std::string& value);
     void set_body(const std::string& content, const std::string& content_type = "text/plain");
+    void clear_body(); 
 
     // Convenience builders
     static HttpResponse make_200(const std::string& body, const std::string& content_type);
+    static HttpResponse make_204();
     static HttpResponse make_400(const std::string& reason);
     static HttpResponse make_403(const std::string& reason);
     static HttpResponse make_404();
