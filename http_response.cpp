@@ -7,6 +7,7 @@
 HttpResponse::HttpResponse() : status_code(200), status_message("OK") {
     headers["Server"] = "Maulik-Bobby-Server/2.0";
     headers["Date"] = current_date();
+    headers["Connection"] = "close";
 }
 
 void HttpResponse::set_status(int code, const std::string& message) {
@@ -63,6 +64,13 @@ HttpResponse HttpResponse::make_404() {
     HttpResponse r;
     r.set_status(404, "Not Found");
     r.set_body("404 Not Found", "text/plain");
+    return r;
+}
+
+HttpResponse HttpResponse::make_409(const std::string& reason) {
+    HttpResponse r;
+    r.set_status(409, "Conflict");
+    r.set_body("409 Conflict: " + reason, "text/plain");
     return r;
 }
 

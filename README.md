@@ -56,6 +56,39 @@ server.add_route("GET", "/api/ping", [](const HttpRequest&) {
 
 Custom routes take priority over static file serving.
 
+## Benchmarking
+
+Benchmark scripts are in `test/`. They compare this server against Python's built-in `http.server`.
+
+Start both servers first:
+
+```bash
+./server content 8080 &
+python3 -m http.server 9090 --directory content &
+```
+
+Then run the benchmark:
+
+```bash
+bash test/run_ab.sh
+bash test/compare.sh
+```
+
+Requires `ab` (ApacheBench). Install it on Fedora with:
+
+```bash
+sudo dnf install httpd-tools
+```
+
+Sample results on a local machine:
+
+| Metric | Our C++ Server | Python Server |
+|--------|---------------|---------------|
+| Requests/sec | 8449 | 1993 |
+| Mean latency | 1.18 ms | 5.01 ms |
+| p99 latency | 3 ms | 8 ms |
+
+
 ## Notes
 
 - Default port is `3490` if not specified

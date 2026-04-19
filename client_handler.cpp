@@ -91,7 +91,7 @@ HttpResponse ClientHandler::handle_post(const HttpRequest& req) const {
 
     struct stat st;
     if (stat(file_path.c_str(), &st) == 0)
-        return HttpResponse::make_400("File already exists. Use PATCH to update.");
+        return HttpResponse::make_409("File already exists. Use PATCH to update.");
 
     std::ofstream file(file_path, std::ios::binary);
     if (!file.is_open())

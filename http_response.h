@@ -18,6 +18,7 @@ public:
     static HttpResponse make_400(const std::string& reason);
     static HttpResponse make_403(const std::string& reason);
     static HttpResponse make_404();
+    static HttpResponse make_409(const std::string& reason);
     static HttpResponse make_500(const std::string& reason);
     static HttpResponse make_501();
 
