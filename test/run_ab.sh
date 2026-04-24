@@ -16,7 +16,7 @@ RESULTS_DIR="$(dirname "$0")/results"
 mkdir -p "$RESULTS_DIR"
 
 REQUESTS=5000
-CONCURRENCY=500
+CONCURRENCY=200
 
 echo "=================================================="
 echo "  HTTP Latency Benchmark — ab"
