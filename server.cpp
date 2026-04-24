@@ -1,4 +1,5 @@
 #include "server.h"
+#include "thread_pool.h"
 #include "config.h"
 #include "client_handler.h"
 #include <sys/types.h>
@@ -7,12 +8,13 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <thread>
 #include <cstring>
 #include <iostream>
 
-Server::Server(const std::string& port, const std::string& root_dir, int backlog)
-    : port(port), root_dir(root_dir), backlog(backlog) {}
+Server::Server(const std::string& port, const std::string& root_dir,
+               int backlog, unsigned int n_threads)
+    : port(port), root_dir(root_dir), backlog(backlog),
+      n_threads(n_threads ? n_threads : 4) {}
 
 Server::~Server() {
     stop();
@@ -25,9 +27,16 @@ void Server::add_route(const std::string& method, const std::string& path, Handl
 void Server::start() {
     if (!setup_socket()) return;
 
+    // Pre-spawn the worker pool now that the socket is ready
+    pool = std::make_unique<ThreadPool>(n_threads, [this](int client_fd) {
+        ClientHandler handler(client_fd, root_dir, router);
+        handler.handle();
+    });
+
     if (!g_silent)
         std::cout << "Server listening on port " << port
-                  << "  root: " << root_dir << std::endl;
+                  << "  root: " << root_dir
+                  << "  threads: " << n_threads << std::endl;
 
     struct sockaddr_storage their_addr;
     socklen_t sin_size;
@@ -50,11 +59,8 @@ void Server::start() {
         if (!g_silent)
             std::cout << "Connection from " << s << std::endl;
 
-        // Capture by value so the lambda owns its own copy of new_fd and root_dir
-        std::thread([new_fd, this]() {
-            ClientHandler handler(new_fd, root_dir, router);
-            handler.handle();
-        }).detach();
+        // Hand the fd off to the pool — no thread creation cost
+        pool->enqueue(new_fd);
     }
 }
 

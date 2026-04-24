@@ -1,5 +1,7 @@
 #include "http_response.h"
 #include <sys/socket.h>
+#include <sys/sendfile.h>
+#include <unistd.h>
 #include <ctime>
 #include <sstream>
 #include <iostream>
@@ -29,6 +31,16 @@ HttpResponse HttpResponse::make_200(const std::string& body, const std::string& 
     HttpResponse r;
     r.set_status(200, "OK");
     r.set_body(body, content_type);
+    return r;
+}
+
+HttpResponse HttpResponse::make_200_sendfile(int fd, off_t size, const std::string& content_type) {
+    HttpResponse r;
+    r.set_status(200, "OK");
+    r.headers["Content-Type"]   = content_type;
+    r.headers["Content-Length"] = std::to_string(size);
+    r.file_fd   = fd;
+    r.file_size = size;
     return r;
 }
 
@@ -91,12 +103,41 @@ HttpResponse HttpResponse::make_501() {
 // --- Send & build ---
 
 bool HttpResponse::send(int client_fd) const {
+    if (file_fd >= 0) {
+        // Zero-copy path: send headers, then sendfile() for the body
+        std::string hdrs = build_headers();
+        if (::send(client_fd, hdrs.c_str(), hdrs.size(), 0) == -1) {
+            perror("send headers");
+            ::close(file_fd);
+            return false;
+        }
+        off_t offset = 0;
+        off_t remaining = file_size;
+        while (remaining > 0) {
+            ssize_t sent = ::sendfile(client_fd, file_fd, &offset, remaining);
+            if (sent <= 0) break; // client disconnected or error
+            remaining -= sent;
+        }
+        ::close(file_fd);
+        return true;
+    }
+
+    // Normal path: headers + body in one send()
     std::string raw = build();
     if (::send(client_fd, raw.c_str(), raw.size(), 0) == -1) {
         perror("send");
         return false;
     }
     return true;
+}
+
+std::string HttpResponse::build_headers() const {
+    std::ostringstream ss;
+    ss << "HTTP/1.1 " << status_code << " " << status_message << "\r\n";
+    for (auto& [k, v] : headers)
+        ss << k << ": " << v << "\r\n";
+    ss << "\r\n";
+    return ss.str();
 }
 
 std::string HttpResponse::build() const {
@@ -119,4 +160,10 @@ std::string HttpResponse::current_date() {
 void HttpResponse::clear_body() {
     body = "";
     headers["Content-Length"] = "0";
+    // If this was a sendfile response, close the fd and fall back to the normal path
+    if (file_fd >= 0) {
+        ::close(file_fd);
+        file_fd   = -1;
+        file_size = 0;
+    }
 }

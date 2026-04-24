@@ -5,6 +5,8 @@
 #include "mime_types.h"
 #include <sys/socket.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <fstream>
 #include <sstream>
@@ -73,15 +75,19 @@ bool ClientHandler::validate(const HttpRequest& req, HttpResponse& out) const {
 HttpResponse ClientHandler::serve_file(const HttpRequest& req) const {
     std::string file_path = root_dir + (req.path == "/" ? "/index.html" : req.path);
 
-    std::ifstream file(file_path, std::ios::binary);
-    if (!file.good())
+    // Open for reading — O_RDONLY so we never accidentally write
+    int fd = open(file_path.c_str(), O_RDONLY);
+    if (fd == -1)
         return HttpResponse::make_404();
 
-    std::ostringstream buf;
-    buf << file.rdbuf();
-    std::string body = buf.str();
+    struct stat st;
+    if (fstat(fd, &st) == -1 || !S_ISREG(st.st_mode)) {
+        ::close(fd);
+        return HttpResponse::make_404();
+    }
 
-    return HttpResponse::make_200(body, MimeTypes::get(file_path));
+    // Hand the open fd to the response; sendfile() will zero-copy it to the socket
+    return HttpResponse::make_200_sendfile(fd, st.st_size, MimeTypes::get(file_path));
 }
 
 HttpResponse ClientHandler::handle_post(const HttpRequest& req) const {
