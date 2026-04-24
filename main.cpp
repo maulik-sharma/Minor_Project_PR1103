@@ -15,6 +15,10 @@ int main(int argc, char* argv[]) {
         return HttpResponse::make_200("{\"status\":\"ok\"}", "application/json");
     });
 
+    server.add_route("GET", "/api/hello", [](const HttpRequest&) {
+        return HttpResponse::make_200("{\"message\":\"hello world\"}", "application/json");
+    });
+
     server.start();
     return 0;
 }
