@@ -1,4 +1,5 @@
 #include "http_request.h"
+#include "config.h"
 #include <sys/socket.h>
 #include <sstream>
 #include <iostream>
@@ -15,12 +16,14 @@ bool HttpRequest::parse(int client_fd) {
 
         if (bytes == 0) {
             if (raw.empty()) {
-                std::cout << "Client closed the connection." << std::endl;
+                if (!g_silent)
+                    std::cout << "Client closed the connection." << std::endl;
             }
             return false;
         }
         if (bytes < 0) {
-            std::cout << "Connection timed out." << std::endl;
+            if (!g_silent)
+                std::cout << "Connection timed out." << std::endl;
             return false;
         }
 
@@ -61,9 +64,11 @@ bool HttpRequest::parse(int client_fd) {
     std::getline(ss, remaining, '\0'); // read the rest
     parse_headers(remaining);
 
-    std::cout << "\nMethod: " << method << "  Path: " << path
-              << "  Version: " << version << std::endl;
-    for (auto& [k, v] : query_params) std::cout << "  " << k << ": " << v << "\n";
+    if (!g_silent) {
+        std::cout << "\nMethod: " << method << "  Path: " << path
+                  << "  Version: " << version << std::endl;
+        for (auto& [k, v] : query_params) std::cout << "  " << k << ": " << v << "\n";
+    }
 
     // Read body if Content-Length is set
     if (has_header("Content-Length")) {

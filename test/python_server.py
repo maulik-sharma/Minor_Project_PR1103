@@ -18,6 +18,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=SERVE_DIR, **kwargs)
 
+    def do_GET(self):
+        if self.path == '/api/ping':
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(b'pong')
+        else:
+            super().do_GET()
+
     # Suppress request logs for cleaner benchmark output
     def log_message(self, format, *args):
         pass

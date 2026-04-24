@@ -30,10 +30,14 @@ make
 ## Run
 
 ```bash
-./server <root_dir> <port>
+./server <root_dir> <port> [options]
 
 # example
 ./server content 8080
+
+# silent mode — suppresses all stdout logging (useful for benchmarking)
+./server content 8080 -q
+./server content 8080 --quiet
 ```
 
 ## Supported Methods
@@ -83,11 +87,9 @@ Custom routes take priority over static file serving.
 
 ## Benchmarking
 
-Benchmark scripts are in `test/`. They compare this server against Python's built-in `http.server` and Apache httpd.
+Benchmark scripts are in `test/`. They compare this server against Python's built-in `http.server` and Apache httpd using ApacheBench (`ab`).
 
-### vs Python http.server
-
-Install ApacheBench first:
+### Install ApacheBench
 
 ```bash
 # Fedora
@@ -97,82 +99,61 @@ sudo dnf install httpd-tools
 sudo apt install apache2-utils
 ```
 
-Start both servers:
+### 3-way benchmark (C++ vs Python vs Apache)
+
+**Step 1 — Install Apache and configure it to serve `content/` on port 8081** (one-time setup):
 
 ```bash
-./server content 8080 &
-python3 -m http.server 9090 --directory content &
+# Ubuntu/Debian
+sudo apt install apache2
+bash test/setup_apache.sh
+
+# Fedora
+sudo dnf install httpd
+bash test/setup_apache.sh
 ```
 
-Run the benchmark:
+**Step 2 — Start the C++ and Python servers:**
+
+```bash
+./server content 8080 -q &
+python3 test/python_server.py &
+```
+
+> Apache runs as a systemd service and is already listening on port 8081 after setup.
+
+**Step 3 — Run the benchmark:**
 
 ```bash
 bash test/run_ab.sh
 bash test/compare.sh
 ```
 
-Kill both servers when done:
+**Stop servers when done:**
 
 ```bash
 kill $(lsof -t -i:8080) $(lsof -t -i:9090) 2>/dev/null
-```
-
-### vs Apache httpd
-
-Install and start Apache:
-
-```bash
-# Fedora
-sudo dnf install httpd
-
-# Ubuntu/Debian
-sudo apt install apache2
-```
-
-Set up equivalent API endpoints on Apache:
-
-```bash
-sudo mkdir -p /var/www/html/api
-echo '{"status":"ok"}' | sudo tee /var/www/html/api/ping
-echo '{"message":"hello world"}' | sudo tee /var/www/html/api/hello
-sudo systemctl start httpd
-```
-
-Start the C++ server and benchmark:
-
-```bash
-./server content 8080 &
-ab -n 5000 -c 10 -H "Connection: close" http://localhost:8080/api/ping
-ab -n 5000 -c 10 -H "Connection: close" http://localhost:80/api/ping
-```
-
-Stop Apache when done:
-
-```bash
-sudo systemctl stop httpd
+sudo systemctl stop apache2
 ```
 
 ### Sample Results
 
-**vs Python http.server** (static file serving):
+3-way comparison (5000 requests, concurrency 10, localhost, logging disabled):
 
-| Metric | Our C++ Server | Python Server |
-|--------|---------------|---------------|
-| Requests/sec | 8449 | 1993 |
-| Mean latency | 1.18 ms | 5.01 ms |
-| p99 latency | 3 ms | 8 ms |
+| Metric | Our C++ Server | Python http.server | Apache httpd 2.4 |
+|--------|---------------|--------------------|------------------|
+| Requests/sec | ~17,700 | ~6,600 | ~19,000 |
+| Mean latency | 0.57 ms | 1.51 ms | 0.51 ms |
+| p95 latency | 1 ms | 1 ms | 1 ms |
+| p99 latency | 2 ms | 1 ms | 1 ms |
+| Failed requests | 0 | 0 | 0 |
 
-**vs Apache httpd** (API endpoint):
-
-| Metric | Our C++ Server | Apache 2.4.66 |
-|--------|---------------|---------------|
-| Requests/sec | 4539 | 4392 |
-| Mean latency | 2.20 ms | 2.27 ms |
-| p99 latency | 5 ms | 3 ms |
+The C++ server is ~2.7× faster than Python and within ~7% of Apache httpd, with zero failed requests.
 
 ## Notes
 
 - Default port is `3490` if not specified
+- Pass `-q` or `--quiet` to suppress all stdout logging
 - `POST` returns `409` if the file already exists — use `PATCH` to update
 - `PATCH` returns `404` if the file does not exist — use `POST` to create it
 - Path traversal attempts (`../`) are blocked with `403 Forbidden`

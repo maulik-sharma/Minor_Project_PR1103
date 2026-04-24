@@ -1,4 +1,5 @@
 #include "client_handler.h"
+#include "config.h"
 #include "http_request.h"
 #include "http_response.h"
 #include "mime_types.h"
@@ -100,7 +101,8 @@ HttpResponse ClientHandler::handle_post(const HttpRequest& req) const {
     file << req.body;
     file.close();
 
-    std::cout << "\n--- POST created: " << file_path << " ---" << std::endl;
+    if (!g_silent)
+        std::cout << "\n--- POST created: " << file_path << " ---" << std::endl;
 
     return HttpResponse::make_201(req.path);
 }

@@ -1,4 +1,5 @@
 #include "server.h"
+#include "config.h"
 #include "client_handler.h"
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -24,8 +25,9 @@ void Server::add_route(const std::string& method, const std::string& path, Handl
 void Server::start() {
     if (!setup_socket()) return;
 
-    std::cout << "Server listening on port " << port
-              << "  root: " << root_dir << std::endl;
+    if (!g_silent)
+        std::cout << "Server listening on port " << port
+                  << "  root: " << root_dir << std::endl;
 
     struct sockaddr_storage their_addr;
     socklen_t sin_size;
@@ -45,7 +47,8 @@ void Server::start() {
             ? (void*)&((sockaddr_in*)&their_addr)->sin_addr
             : (void*)&((sockaddr_in6*)&their_addr)->sin6_addr;
         inet_ntop(their_addr.ss_family, addr_ptr, s, sizeof s);
-        std::cout << "Connection from " << s << std::endl;
+        if (!g_silent)
+            std::cout << "Connection from " << s << std::endl;
 
         // Capture by value so the lambda owns its own copy of new_fd and root_dir
         std::thread([new_fd, this]() {
