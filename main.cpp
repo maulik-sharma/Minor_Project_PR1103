@@ -29,6 +29,23 @@ int main(int argc, char* argv[]) {
         return HttpResponse::make_200("{\"message\":\"hello world\"}", "application/json");
     });
 
+    server.add_route("GET", "/api/server-info", [&port](const HttpRequest&) {
+        std::string json =
+            "{"
+            "\"server\":\"Maulik-Bobby-Server/2.0\","
+            "\"language\":\"C++17\","
+            "\"port\":\"" + port + "\","
+            "\"methods\":[\"GET\",\"POST\",\"PATCH\",\"DELETE\",\"HEAD\"],"
+            "\"features\":[\"SO_REUSEPORT\",\"sendfile zero-copy\",\"TCP_NODELAY\",\"keep-alive\",\"custom routing\"],"
+            "\"routes\":[\"/api/ping\",\"/api/hello\",\"/api/server-info\",\"/api/echo\"]"
+            "}";
+        return HttpResponse::make_200(json, "application/json");
+    });
+
+    server.add_route("POST", "/api/echo", [](const HttpRequest& req) {
+        return HttpResponse::make_200(req.body, "application/json");
+    });
+
     server.start();
     return 0;
 }

@@ -4,43 +4,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
+    <meta name="description" content="A high-performance HTTP/1.1 server built from scratch in C++ with Linux socket APIs, zero-copy sendfile, and SO_REUSEPORT multi-threading.">
+    <title>PR1103 HTTP Server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="search-box">
-                <input type="text" placeholder="Enter your location" class="input-box">
-                <button class="fa-solid fa-magnifying-glass" id="searchBtn"> </button>
+    <!-- Live server banner -->
+    <div class="live-banner" id="liveBanner">
+        <span class="live-dot"></span>
+        <span class="live-text">This page is being served live from <strong>Maulik-Bobby-Server/2.0</strong></span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav" id="mainNav">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">
+                <span class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </span>
+                PR1103
+            </a>
+            <div class="nav-links">
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#methods" class="nav-link">Methods</a>
+                <a href="#playground" class="nav-link">Playground</a>
+                <a href="#benchmarks" class="nav-link">Benchmarks</a>
             </div>
-            <div class="location-not-found">
-                <h2>Sorry, Location not found !!</h2>
-                <img src="./images/404.png" alt="page-not-found">
-            </div>
-            <div class="weather-body">
-                <img src="./images/clear.png" alt="weather image" class="weather-img">
-                <div class="weather-box">
-                    <p class="temprature">0<sup>°C</sup></p>
-                    <p class="description">Sunny</p>
+        </div>
+    </nav>
+
+    <!-- Hero Section — asymmetric split -->
+    <section class="hero" id="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    C++17 / Linux Sockets / HTTP 1.1
                 </div>
-                <div class="weather-details">
-                    <div class="humidity"><i class="fa-solid fa-droplet"></i>
-                        <span id="humid">40%</span>
-                        <p>Humidity</p>
+                <h1 class="hero-title">
+                    High-Performance<br>
+                    <span class="hero-accent">HTTP Server</span>
+                </h1>
+                <p class="hero-desc">
+                    A custom HTTP/1.1 server built from scratch with raw POSIX sockets. Zero-copy file transfers via sendfile(), kernel-level load balancing through SO_REUSEPORT, and full CRUD operations. Benchmarked within 7% of Apache httpd.
+                </p>
+                <div class="hero-actions">
+                    <a href="#playground" class="btn-primary" id="btnTryApi">
+                        Try the API
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
+                    <a href="#architecture" class="btn-ghost" id="btnLearnMore">How it works</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="statRps">~17,700</span>
+                        <span class="stat-label">req/sec</span>
                     </div>
-                    <div class="wind"><i class="fa-solid fa-wind"></i>
-                        <span id="wind">40Km/H</span>
-                        <p>Wind Speed</p>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value">0.57ms</span>
+                        <span class="stat-label">mean latency</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value">0</span>
+                        <span class="stat-label">failed requests</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="terminal" id="heroTerminal">
+                    <div class="terminal-bar">
+                        <span class="term-dot term-dot--red"></span>
+                        <span class="term-dot term-dot--yellow"></span>
+                        <span class="term-dot term-dot--green"></span>
+                        <span class="term-title">server terminal</span>
+                    </div>
+                    <div class="terminal-body" id="terminalBody">
+                        <div class="term-line"><span class="term-prompt">$</span> <span class="term-cmd">make</span></div>
+                        <div class="term-line term-output">g++ -std=c++17 -Wall -Wextra -pthread -O2 -o server *.cpp</div>
+                        <div class="term-line"><span class="term-prompt">$</span> <span class="term-cmd">./server content 3490</span></div>
+                        <div class="term-line term-output">Server listening on port 3490  root: content  threads: 4  [SO_REUSEPORT + O2]</div>
+                        <div class="term-line term-output term-success">Connection from 127.0.0.1</div>
+                        <div class="term-line term-output">Method: GET  Path: /  Version: HTTP/1.1</div>
+                        <div class="term-line term-output term-success">Connection from 127.0.0.1</div>
+                        <div class="term-line term-output">Method: GET  Path: /style.css  Version: HTTP/1.1</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script src="https://kit.fontawesome.com/2c1aab6232.js" crossorigin="anonymous"></script>
+    <!-- Architecture Section -->
+    <section class="section" id="architecture">
+        <div class="section-inner">
+            <div class="section-header section-header--left">
+                <span class="section-tag">Architecture</span>
+                <h2 class="section-title">How it works under the hood</h2>
+                <p class="section-desc">Every design choice was made to minimize latency and maximize throughput without relying on third-party libraries.</p>
+            </div>
+            <div class="arch-grid">
+                <div class="arch-card arch-card--wide">
+                    <div class="arch-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    </div>
+                    <h3 class="arch-title">SO_REUSEPORT Multi-Threading</h3>
+                    <p class="arch-desc">Each worker thread creates its own listening socket bound to the same port. The Linux kernel distributes incoming connections across all threads with zero userspace locking on the hot path.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                    </div>
+                    <h3 class="arch-title">Zero-Copy sendfile()</h3>
+                    <p class="arch-desc">Static files are transferred directly from disk to socket via the sendfile() syscall, bypassing userspace memory entirely.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <h3 class="arch-title">Request Validation</h3>
+                    <p class="arch-desc">Enforces RFC 9112 Host header requirements and blocks path traversal attacks before any file system access.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <h3 class="arch-title">Keep-Alive + TCP_NODELAY</h3>
+                    <p class="arch-desc">Persistent HTTP connections with Nagle's algorithm disabled for instant small-response delivery.</p>
+                </div>
+                <div class="arch-card">
+                    <div class="arch-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <h3 class="arch-title">Custom Router</h3>
+                    <p class="arch-desc">Register lambda-based API routes that take priority over static file serving. Simple map-based dispatch for O(log n) lookup.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HTTP Methods Section -->
+    <section class="section section--alt" id="methods">
+        <div class="section-inner">
+            <div class="section-header section-header--left">
+                <span class="section-tag">Supported Methods</span>
+                <h2 class="section-title">Full CRUD over HTTP</h2>
+                <p class="section-desc">The server implements five standard HTTP methods, each with proper status codes and error handling.</p>
+            </div>
+            <div class="methods-list">
+                <div class="method-row">
+                    <div class="method-badge method-badge--get">GET</div>
+                    <div class="method-info">
+                        <h3 class="method-title">Serve Static Files</h3>
+                        <p class="method-desc">Returns the requested file from the root directory with correct MIME types. Uses sendfile() for zero-copy transfer.</p>
+                    </div>
+                    <code class="method-example">curl http://localhost:3490/index.html</code>
+                </div>
+                <div class="method-row">
+                    <div class="method-badge method-badge--post">POST</div>
+                    <div class="method-info">
+                        <h3 class="method-title">Create a New File</h3>
+                        <p class="method-desc">Writes the request body to a new file at the given path. Returns 409 if the file already exists.</p>
+                    </div>
+                    <code class="method-example">curl -X POST -d "content" http://localhost:3490/new.txt</code>
+                </div>
+                <div class="method-row">
+                    <div class="method-badge method-badge--patch">PATCH</div>
+                    <div class="method-info">
+                        <h3 class="method-title">Append to a File</h3>
+                        <p class="method-desc">Appends the request body to an existing file. Returns 404 if the file does not exist.</p>
+                    </div>
+                    <code class="method-example">curl -X PATCH -d " more" http://localhost:3490/new.txt</code>
+                </div>
+                <div class="method-row">
+                    <div class="method-badge method-badge--delete">DELETE</div>
+                    <div class="method-info">
+                        <h3 class="method-title">Remove a File</h3>
+                        <p class="method-desc">Deletes the file at the specified path. Only regular files can be deleted, not directories.</p>
+                    </div>
+                    <code class="method-example">curl -X DELETE http://localhost:3490/new.txt</code>
+                </div>
+                <div class="method-row">
+                    <div class="method-badge method-badge--head">HEAD</div>
+                    <div class="method-info">
+                        <h3 class="method-title">Inspect Headers</h3>
+                        <p class="method-desc">Returns identical headers to a GET request but with no response body. Useful for checking file existence.</p>
+                    </div>
+                    <code class="method-example">curl -I http://localhost:3490/index.html</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Playground Section -->
+    <section class="section" id="playground">
+        <div class="section-inner">
+            <div class="section-header section-header--left">
+                <span class="section-tag">Playground</span>
+                <h2 class="section-title">Hit the API, right now</h2>
+                <p class="section-desc">These buttons make live requests to the server serving this page. Watch the response come back in real-time.</p>
+            </div>
+            <div class="playground-grid">
+                <div class="playground-card" id="playPing">
+                    <div class="play-header">
+                        <div class="play-method play-method--get">GET</div>
+                        <code class="play-route">/api/ping</code>
+                    </div>
+                    <p class="play-desc">Health check endpoint. Returns a simple JSON status.</p>
+                    <button class="play-btn" id="btnPing">
+                        Send Request
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                    <div class="play-response" id="resPing">
+                        <div class="res-status"></div>
+                        <pre class="res-body"></pre>
+                    </div>
+                </div>
+                <div class="playground-card" id="playHello">
+                    <div class="play-header">
+                        <div class="play-method play-method--get">GET</div>
+                        <code class="play-route">/api/hello</code>
+                    </div>
+                    <p class="play-desc">Custom API route returning a hello world JSON message.</p>
+                    <button class="play-btn" id="btnHello">
+                        Send Request
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                    <div class="play-response" id="resHello">
+                        <div class="res-status"></div>
+                        <pre class="res-body"></pre>
+                    </div>
+                </div>
+                <div class="playground-card" id="playServer">
+                    <div class="play-header">
+                        <div class="play-method play-method--get">GET</div>
+                        <code class="play-route">/api/server-info</code>
+                    </div>
+                    <p class="play-desc">Returns server metadata: name, version, supported methods, and available routes.</p>
+                    <button class="play-btn" id="btnServerInfo">
+                        Send Request
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                    <div class="play-response" id="resServerInfo">
+                        <div class="res-status"></div>
+                        <pre class="res-body"></pre>
+                    </div>
+                </div>
+                <div class="playground-card" id="playEcho">
+                    <div class="play-header">
+                        <div class="play-method play-method--post">POST</div>
+                        <code class="play-route">/api/echo</code>
+                    </div>
+                    <p class="play-desc">Echoes back whatever JSON payload you send. Try typing something below.</p>
+                    <textarea class="play-input" id="echoInput" placeholder='{"your": "data here"}' rows="2"></textarea>
+                    <button class="play-btn" id="btnEcho">
+                        Send Request
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                    <div class="play-response" id="resEcho">
+                        <div class="res-status"></div>
+                        <pre class="res-body"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benchmarks Section -->
+    <section class="section section--alt" id="benchmarks">
+        <div class="section-inner">
+            <div class="section-header section-header--left">
+                <span class="section-tag">Benchmarks</span>
+                <h2 class="section-title">Performance comparison</h2>
+                <p class="section-desc">5,000 requests at concurrency 10, on localhost with logging disabled. Measured with ApacheBench.</p>
+            </div>
+            <div class="bench-grid">
+                <div class="bench-card bench-card--highlight">
+                    <div class="bench-label">This Server (C++)</div>
+                    <div class="bench-bar-wrap">
+                        <div class="bench-bar bench-bar--cpp" style="--bar-width: 93%;">
+                            <span class="bench-value">~17,700 req/s</span>
+                        </div>
+                    </div>
+                    <div class="bench-meta">0.57ms mean latency</div>
+                </div>
+                <div class="bench-card">
+                    <div class="bench-label">Apache httpd 2.4</div>
+                    <div class="bench-bar-wrap">
+                        <div class="bench-bar bench-bar--apache" style="--bar-width: 100%;">
+                            <span class="bench-value">~19,000 req/s</span>
+                        </div>
+                    </div>
+                    <div class="bench-meta">0.51ms mean latency</div>
+                </div>
+                <div class="bench-card">
+                    <div class="bench-label">Python http.server</div>
+                    <div class="bench-bar-wrap">
+                        <div class="bench-bar bench-bar--python" style="--bar-width: 35%;">
+                            <span class="bench-value">~6,600 req/s</span>
+                        </div>
+                    </div>
+                    <div class="bench-meta">1.51ms mean latency</div>
+                </div>
+            </div>
+            <p class="bench-footnote">The C++ server is ~2.7x faster than Python and within ~7% of Apache httpd, with zero failed requests across all runs.</p>
+        </div>
+    </section>
+
+    <!-- Server proof footer -->
+    <footer class="footer" id="footer">
+        <div class="footer-inner">
+            <div class="footer-proof">
+                <span class="live-dot"></span>
+                <span>Served by <strong>Maulik-Bobby-Server/2.0</strong> on port <span id="footerPort">3490</span></span>
+            </div>
+            <div class="footer-meta">
+                <span>Response headers include <code>Server: Maulik-Bobby-Server/2.0</code></span>
+            </div>
+            <div class="footer-links">
+                <span>Built with C++17</span>
+                <span class="footer-sep">|</span>
+                <span>Linux Socket APIs</span>
+                <span class="footer-sep">|</span>
+                <span>PR1103 Minor Project</span>
+            </div>
+        </div>
+    </footer>
+
     <script src="./script.js"></script>
 </body>
 
-</html
+</html>

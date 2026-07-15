@@ -14,6 +14,7 @@ std::string MimeTypes::get(const std::string& path) {
     if (ext == ".png")                   return "image/png";
     if (ext == ".gif")                   return "image/gif";
     if (ext == ".ico")                   return "image/x-icon";
+    if (ext == ".svg")                   return "image/svg+xml";
 
     return "application/octet-stream";
 }
