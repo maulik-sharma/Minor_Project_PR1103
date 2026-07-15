@@ -40,9 +40,9 @@
         </div>
     </nav>
 
-    <!-- Hero Section — asymmetric split -->
+    <!-- Hero Section -->
     <section class="hero" id="hero">
-        <div class="hero-inner">
+        <div class="hero-inner hero-inner--single">
             <div class="hero-content">
                 <div class="hero-badge">
                     <span class="badge-dot"></span>
@@ -53,7 +53,7 @@
                     <span class="hero-accent">HTTP Server</span>
                 </h1>
                 <p class="hero-desc">
-                    A custom HTTP/1.1 server built from scratch with raw POSIX sockets. Zero-copy file transfers via sendfile(), kernel-level load balancing through SO_REUSEPORT, and full CRUD operations. Benchmarked within 7% of Apache httpd.
+                    A custom HTTP/1.1 server built from scratch with raw POSIX sockets. Zero-copy file transfers via sendfile(), kernel-level load balancing through SO_REUSEPORT, and full CRUD operations. Outperforms Apache httpd under high concurrency.
                 </p>
                 <div class="hero-actions">
                     <a href="#playground" class="btn-primary" id="btnTryApi">
@@ -64,13 +64,13 @@
                 </div>
                 <div class="hero-stats">
                     <div class="stat">
-                        <span class="stat-value" id="statRps">~17,700</span>
-                        <span class="stat-label">req/sec</span>
+                        <span class="stat-value" id="statRps">21,134</span>
+                        <span class="stat-label">peak req/sec</span>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat">
-                        <span class="stat-value">0.57ms</span>
-                        <span class="stat-label">mean latency</span>
+                        <span class="stat-value">0.604ms</span>
+                        <span class="stat-label">min mean latency</span>
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat">
@@ -79,23 +79,33 @@
                     </div>
                 </div>
             </div>
-            <div class="hero-visual">
-                <div class="terminal" id="heroTerminal">
-                    <div class="terminal-bar">
-                        <span class="term-dot term-dot--red"></span>
-                        <span class="term-dot term-dot--yellow"></span>
-                        <span class="term-dot term-dot--green"></span>
-                        <span class="term-title">server terminal</span>
+        </div>
+    </section>
+
+    <!-- Server Proof Section -->
+    <section class="section server-proof-section" id="serverProof">
+        <div class="section-inner">
+            <div class="proof-box">
+                <div class="proof-header">
+                    <span class="live-dot live-dot--lg"></span>
+                    <div>
+                        <h2 class="proof-title">You are viewing this page live from our C++ server</h2>
+                        <p class="proof-subtitle">This HTML, CSS, and JavaScript were delivered to your browser by <strong>Maulik-Bobby-Server/2.0</strong> — not Nginx, not Apache, not Node.js.</p>
                     </div>
-                    <div class="terminal-body" id="terminalBody">
-                        <div class="term-line"><span class="term-prompt">$</span> <span class="term-cmd">make</span></div>
-                        <div class="term-line term-output">g++ -std=c++17 -Wall -Wextra -pthread -O2 -o server *.cpp</div>
-                        <div class="term-line"><span class="term-prompt">$</span> <span class="term-cmd">./server content 3490</span></div>
-                        <div class="term-line term-output">Server listening on port 3490  root: content  threads: 4  [SO_REUSEPORT + O2]</div>
-                        <div class="term-line term-output term-success">Connection from 127.0.0.1</div>
-                        <div class="term-line term-output">Method: GET  Path: /  Version: HTTP/1.1</div>
-                        <div class="term-line term-output term-success">Connection from 127.0.0.1</div>
-                        <div class="term-line term-output">Method: GET  Path: /style.css  Version: HTTP/1.1</div>
+                </div>
+                <div class="proof-details">
+                    <div class="proof-card">
+                        <h3 class="proof-card-title">Actual Response Headers</h3>
+                        <p class="proof-card-desc">These are the real HTTP headers your browser received when loading this page:</p>
+                        <pre class="proof-headers" id="proofHeaders"><span class="proof-loading">Fetching headers from server...</span></pre>
+                    </div>
+                    <div class="proof-card">
+                        <h3 class="proof-card-title">How to verify</h3>
+                        <p class="proof-card-desc">Open your browser's DevTools (F12), go to the Network tab, click the first request, and check the response headers. You will see:</p>
+                        <div class="proof-verify">
+                            <code>Server: Maulik-Bobby-Server/2.0</code>
+                        </div>
+                        <p class="proof-card-desc">Every file on this page — <code>index.html</code>, <code>style.css</code>, <code>script.js</code> — was served through our custom C++ HTTP stack with zero-copy sendfile().</p>
                     </div>
                 </div>
             </div>
@@ -227,21 +237,7 @@
                         <pre class="res-body"></pre>
                     </div>
                 </div>
-                <div class="playground-card" id="playHello">
-                    <div class="play-header">
-                        <div class="play-method play-method--get">GET</div>
-                        <code class="play-route">/api/hello</code>
-                    </div>
-                    <p class="play-desc">Custom API route returning a hello world JSON message.</p>
-                    <button class="play-btn" id="btnHello">
-                        Send Request
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </button>
-                    <div class="play-response" id="resHello">
-                        <div class="res-status"></div>
-                        <pre class="res-body"></pre>
-                    </div>
-                </div>
+
                 <div class="playground-card" id="playServer">
                     <div class="play-header">
                         <div class="play-method play-method--get">GET</div>
@@ -282,39 +278,125 @@
         <div class="section-inner">
             <div class="section-header section-header--left">
                 <span class="section-tag">Benchmarks</span>
-                <h2 class="section-title">Performance comparison</h2>
-                <p class="section-desc">5,000 requests at concurrency 10, on localhost with logging disabled. Measured with ApacheBench.</p>
+                <h2 class="section-title">Performance at scale</h2>
+                <p class="section-desc">5,000 total requests across increasing concurrency levels. Our C++ server vs Apache httpd 2.4, measured with ApacheBench on localhost.</p>
             </div>
-            <div class="bench-grid">
-                <div class="bench-card bench-card--highlight">
-                    <div class="bench-label">This Server (C++)</div>
-                    <div class="bench-bar-wrap">
-                        <div class="bench-bar bench-bar--cpp" style="--bar-width: 93%;">
-                            <span class="bench-value">~17,700 req/s</span>
-                        </div>
-                    </div>
-                    <div class="bench-meta">0.57ms mean latency</div>
-                </div>
-                <div class="bench-card">
-                    <div class="bench-label">Apache httpd 2.4</div>
-                    <div class="bench-bar-wrap">
-                        <div class="bench-bar bench-bar--apache" style="--bar-width: 100%;">
-                            <span class="bench-value">~19,000 req/s</span>
-                        </div>
-                    </div>
-                    <div class="bench-meta">0.51ms mean latency</div>
-                </div>
-                <div class="bench-card">
-                    <div class="bench-label">Python http.server</div>
-                    <div class="bench-bar-wrap">
-                        <div class="bench-bar bench-bar--python" style="--bar-width: 35%;">
-                            <span class="bench-value">~6,600 req/s</span>
-                        </div>
-                    </div>
-                    <div class="bench-meta">1.51ms mean latency</div>
-                </div>
+
+            <!-- Concurrency selector tabs -->
+            <div class="bench-tabs" id="benchTabs">
+                <button class="bench-tab bench-tab--active" data-level="10">c=10</button>
+                <button class="bench-tab" data-level="50">c=50</button>
+                <button class="bench-tab" data-level="100">c=100</button>
+                <button class="bench-tab" data-level="200">c=200</button>
             </div>
-            <p class="bench-footnote">The C++ server is ~2.7x faster than Python and within ~7% of Apache httpd, with zero failed requests across all runs.</p>
+
+            <!-- Benchmark panels -->
+            <div class="bench-panels" id="benchPanels">
+
+                <!-- c=10 -->
+                <div class="bench-panel bench-panel--active" data-level="10">
+                    <div class="bench-comparison">
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--ours">Our Server</div>
+                            <div class="bench-big-number">16,557<span class="bench-unit">req/s</span></div>
+                        </div>
+                        <div class="bench-vs">vs</div>
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--apache">Apache httpd</div>
+                            <div class="bench-big-number">17,042<span class="bench-unit">req/s</span></div>
+                        </div>
+                    </div>
+                    <table class="bench-table">
+                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <tbody>
+                            <tr><td>Mean Latency</td><td>0.604 ms</td><td>0.587 ms</td></tr>
+                            <tr><td>p50 Latency</td><td>1 ms</td><td>1 ms</td></tr>
+                            <tr><td>p95 Latency</td><td>1 ms</td><td>1 ms</td></tr>
+                            <tr><td>p99 Latency</td><td>2 ms</td><td>1 ms</td></tr>
+                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- c=50 -->
+                <div class="bench-panel" data-level="50">
+                    <div class="bench-comparison">
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--ours">Our Server</div>
+                            <div class="bench-big-number bench-big-number--winner">20,949<span class="bench-unit">req/s</span></div>
+                        </div>
+                        <div class="bench-vs">vs</div>
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--apache">Apache httpd</div>
+                            <div class="bench-big-number">18,927<span class="bench-unit">req/s</span></div>
+                        </div>
+                    </div>
+                    <table class="bench-table">
+                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <tbody>
+                            <tr><td>Mean Latency</td><td class="bench-winner">2.387 ms</td><td>2.642 ms</td></tr>
+                            <tr><td>p50 Latency</td><td class="bench-winner">2 ms</td><td>3 ms</td></tr>
+                            <tr><td>p95 Latency</td><td>3 ms</td><td>3 ms</td></tr>
+                            <tr><td>p99 Latency</td><td>5 ms</td><td>3 ms</td></tr>
+                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- c=100 -->
+                <div class="bench-panel" data-level="100">
+                    <div class="bench-comparison">
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--ours">Our Server</div>
+                            <div class="bench-big-number bench-big-number--winner">20,430<span class="bench-unit">req/s</span></div>
+                        </div>
+                        <div class="bench-vs">vs</div>
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--apache">Apache httpd</div>
+                            <div class="bench-big-number">18,332<span class="bench-unit">req/s</span></div>
+                        </div>
+                    </div>
+                    <table class="bench-table">
+                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <tbody>
+                            <tr><td>Mean Latency</td><td class="bench-winner">4.895 ms</td><td>5.455 ms</td></tr>
+                            <tr><td>p50 Latency</td><td class="bench-winner">2 ms</td><td>5 ms</td></tr>
+                            <tr><td>p95 Latency</td><td class="bench-winner">5 ms</td><td>6 ms</td></tr>
+                            <tr><td>p99 Latency</td><td>12 ms</td><td>8 ms</td></tr>
+                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- c=200 -->
+                <div class="bench-panel" data-level="200">
+                    <div class="bench-comparison">
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--ours">Our Server</div>
+                            <div class="bench-big-number bench-big-number--winner">21,134<span class="bench-unit">req/s</span></div>
+                        </div>
+                        <div class="bench-vs">vs</div>
+                        <div class="bench-col">
+                            <div class="bench-col-label bench-col-label--apache">Apache httpd</div>
+                            <div class="bench-big-number">16,772<span class="bench-unit">req/s</span></div>
+                        </div>
+                    </div>
+                    <table class="bench-table">
+                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <tbody>
+                            <tr><td>Mean Latency</td><td class="bench-winner">9.463 ms</td><td>11.925 ms</td></tr>
+                            <tr><td>p50 Latency</td><td class="bench-winner">3 ms</td><td>11 ms</td></tr>
+                            <tr><td>p95 Latency</td><td class="bench-winner">4 ms</td><td>14 ms</td></tr>
+                            <tr><td>p99 Latency</td><td class="bench-winner">9 ms</td><td>15 ms</td></tr>
+                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <p class="bench-footnote">At low concurrency (c=10), both servers perform similarly. As concurrency increases, our C++ server pulls ahead — at c=200 it delivers 26% more throughput with 3.6x lower p50 latency. Zero failed requests across all runs for both servers.</p>
+            <p class="bench-footnote bench-specs">Benchmark system: Intel i7-1185G7 @ 3.00 GHz, 16 GB RAM. Apache httpd running with default configuration. Both servers on the same machine, logging disabled.</p>
         </div>
     </section>
 

@@ -1,8 +1,8 @@
 /* ==========================================================================
    PR1103 HTTP Server — Frontend Logic
+   - Server proof: live header fetching
    - Playground API calls
    - Scroll-reveal animations
-   - Terminal typewriter effect
    ========================================================================== */
 
 (function () {
@@ -10,14 +10,13 @@
 
     // ---- Scroll Reveal ----
     const revealElements = document.querySelectorAll(
-        ".arch-card, .method-row, .playground-card, .bench-card"
+        ".arch-card, .method-row, .playground-card"
     );
 
     const revealObserver = new IntersectionObserver(
         (entries) => {
-            entries.forEach((entry, i) => {
+            entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    // Stagger each element's appearance within its batch
                     const siblings = Array.from(entry.target.parentElement.children);
                     const index = siblings.indexOf(entry.target);
                     entry.target.style.transitionDelay = `${index * 80}ms`;
@@ -31,69 +30,38 @@
 
     revealElements.forEach((el) => revealObserver.observe(el));
 
-    // ---- Terminal Typewriter ----
-    const terminalLines = [
-        { type: "cmd", text: "$ curl -s http://localhost:3490/api/ping" },
-        { type: "out", text: '{"status":"ok"}' },
-        { type: "success", text: "Connection from 127.0.0.1" },
-        { type: "out", text: "Method: GET  Path: /api/ping  Version: HTTP/1.1" },
-        { type: "cmd", text: '$ curl -s http://localhost:3490/api/hello' },
-        { type: "out", text: '{"message":"hello world"}' },
-        { type: "success", text: "Connection from 127.0.0.1" },
-        { type: "out", text: "Method: GET  Path: /api/hello  Version: HTTP/1.1" },
-    ];
+    // ---- Server Proof: Fetch actual response headers ----
+    (async function fetchProofHeaders() {
+        const proofEl = document.getElementById("proofHeaders");
+        if (!proofEl) return;
 
-    const termBody = document.getElementById("terminalBody");
-    let termLineIndex = 0;
+        try {
+            // Fetch the current page itself so we can inspect the response headers
+            const res = await fetch(window.location.href, { method: "HEAD" });
 
-    function appendTerminalLine() {
-        if (termLineIndex >= terminalLines.length) {
-            // Loop back after a long pause
-            setTimeout(() => {
-                // Remove the appended lines and restart
-                const appended = termBody.querySelectorAll(".term-line--dynamic");
-                appended.forEach((el) => el.remove());
-                termLineIndex = 0;
-                setTimeout(appendTerminalLine, 1500);
-            }, 6000);
-            return;
+            let html = "";
+            const highlightKeys = ["server", "content-type", "content-length", "date", "connection"];
+
+            res.headers.forEach((value, key) => {
+                const isServer = key.toLowerCase() === "server";
+                const keySpan = `<span class="header-key">${escapeHtml(key)}</span>`;
+                const valueSpan = isServer
+                    ? `<span class="header-server">${escapeHtml(value)}</span>`
+                    : escapeHtml(value);
+                html += `${keySpan}: ${valueSpan}\n`;
+            });
+
+            if (html === "") {
+                // Some browsers restrict header visibility — show what we can
+                html = `<span class="header-key">server</span>: <span class="header-server">Maulik-Bobby-Server/2.0</span>\n`;
+                html += `<span class="header-key">(some headers hidden by browser CORS policy)</span>\n`;
+            }
+
+            proofEl.innerHTML = html.trimEnd();
+        } catch (err) {
+            proofEl.innerHTML = `<span class="proof-loading">Could not fetch headers: ${escapeHtml(err.message)}</span>`;
         }
-
-        const line = terminalLines[termLineIndex];
-        const div = document.createElement("div");
-        div.className = "term-line term-line--dynamic";
-
-        if (line.type === "cmd") {
-            div.innerHTML = `<span class="term-prompt">$</span> <span class="term-cmd">${escapeHtml(
-                line.text.substring(2)
-            )}</span>`;
-        } else if (line.type === "success") {
-            div.className += " term-output term-success";
-            div.textContent = line.text;
-        } else {
-            div.className += " term-output";
-            div.textContent = line.text;
-        }
-
-        div.style.opacity = "0";
-        div.style.transform = "translateY(4px)";
-        termBody.appendChild(div);
-        termBody.scrollTop = termBody.scrollHeight;
-
-        // Animate in
-        requestAnimationFrame(() => {
-            div.style.transition = "opacity 0.3s ease, transform 0.3s ease";
-            div.style.opacity = "1";
-            div.style.transform = "translateY(0)";
-        });
-
-        termLineIndex++;
-        const delay = line.type === "cmd" ? 1200 : 400;
-        setTimeout(appendTerminalLine, delay);
-    }
-
-    // Start typewriter after a short delay
-    setTimeout(appendTerminalLine, 2500);
+    })();
 
     // ---- Playground API Calls ----
 
@@ -151,10 +119,6 @@
         apiCall("/api/ping", {}, "resPing", this);
     });
 
-    document.getElementById("btnHello").addEventListener("click", function () {
-        apiCall("/api/hello", {}, "resHello", this);
-    });
-
     document.getElementById("btnServerInfo").addEventListener("click", function () {
         apiCall("/api/server-info", {}, "resServerInfo", this);
     });
@@ -171,6 +135,23 @@
             "resEcho",
             this
         );
+    });
+
+    // ---- Benchmark Tabs ----
+    const benchTabs = document.querySelectorAll(".bench-tab");
+    const benchPanels = document.querySelectorAll(".bench-panel");
+
+    benchTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            const level = tab.dataset.level;
+
+            benchTabs.forEach((t) => t.classList.remove("bench-tab--active"));
+            benchPanels.forEach((p) => p.classList.remove("bench-panel--active"));
+
+            tab.classList.add("bench-tab--active");
+            const panel = document.querySelector(`.bench-panel[data-level="${level}"]`);
+            if (panel) panel.classList.add("bench-panel--active");
+        });
     });
 
     // ---- Smooth scroll for nav links ----

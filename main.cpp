@@ -25,10 +25,6 @@ int main(int argc, char* argv[]) {
         return HttpResponse::make_200("{\"status\":\"ok\"}", "application/json");
     });
 
-    server.add_route("GET", "/api/hello", [](const HttpRequest&) {
-        return HttpResponse::make_200("{\"message\":\"hello world\"}", "application/json");
-    });
-
     server.add_route("GET", "/api/server-info", [&port](const HttpRequest&) {
         std::string json =
             "{"
@@ -37,7 +33,7 @@ int main(int argc, char* argv[]) {
             "\"port\":\"" + port + "\","
             "\"methods\":[\"GET\",\"POST\",\"PATCH\",\"DELETE\",\"HEAD\"],"
             "\"features\":[\"SO_REUSEPORT\",\"sendfile zero-copy\",\"TCP_NODELAY\",\"keep-alive\",\"custom routing\"],"
-            "\"routes\":[\"/api/ping\",\"/api/hello\",\"/api/server-info\",\"/api/echo\"]"
+            "\"routes\":[\"/api/ping\",\"/api/server-info\",\"/api/echo\"]"
             "}";
         return HttpResponse::make_200(json, "application/json");
     });
