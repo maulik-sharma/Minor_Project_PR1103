@@ -4,11 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A high-performance HTTP/1.1 server built from scratch in C++ with Linux socket APIs, zero-copy sendfile, and SO_REUSEPORT multi-threading.">
-    <title>PR1103 HTTP Server</title>
+    <meta name="description"
+        content="A high-performance HTTP/1.1 server built from scratch in C++ with Linux socket APIs, zero-copy sendfile, and SO_REUSEPORT multi-threading.">
+    <title>Lightweight HTTP Server</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -24,12 +27,13 @@
         <div class="nav-inner">
             <a href="#" class="nav-brand">
                 <span class="brand-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="16 18 22 12 16 6"></polyline>
                         <polyline points="8 6 2 12 8 18"></polyline>
                     </svg>
                 </span>
-                PR1103
+                Lightweight HTTP Server
             </a>
             <div class="nav-links">
                 <a href="#architecture" class="nav-link">Architecture</a>
@@ -53,12 +57,18 @@
                     <span class="hero-accent">HTTP Server</span>
                 </h1>
                 <p class="hero-desc">
-                    A custom HTTP/1.1 server built from scratch with raw POSIX sockets. Zero-copy file transfers via sendfile(), kernel-level load balancing through SO_REUSEPORT, and full CRUD operations. Outperforms Apache httpd under high concurrency.
+                    A custom HTTP/1.1 server built from scratch with raw POSIX sockets. Zero-copy file transfers via
+                    sendfile(), kernel-level load balancing through SO_REUSEPORT, and full CRUD operations. Outperforms
+                    Apache httpd under high concurrency.
                 </p>
                 <div class="hero-actions">
                     <a href="#playground" class="btn-primary" id="btnTryApi">
                         Try the API
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </a>
                     <a href="#architecture" class="btn-ghost" id="btnLearnMore">How it works</a>
                 </div>
@@ -90,22 +100,30 @@
                     <span class="live-dot live-dot--lg"></span>
                     <div>
                         <h2 class="proof-title">You are viewing this page live from our C++ server</h2>
-                        <p class="proof-subtitle">This HTML, CSS, and JavaScript were delivered to your browser by <strong>Maulik-Bobby-Server/2.0</strong> — not Nginx, not Apache, not Node.js.</p>
+                        <p class="proof-subtitle">This HTML, CSS, and JavaScript were delivered to your browser by
+                            <strong>Maulik-Bobby-Server/2.0</strong>
+                        </p>
                     </div>
                 </div>
                 <div class="proof-details">
                     <div class="proof-card">
                         <h3 class="proof-card-title">Actual Response Headers</h3>
-                        <p class="proof-card-desc">These are the real HTTP headers your browser received when loading this page:</p>
-                        <pre class="proof-headers" id="proofHeaders"><span class="proof-loading">Fetching headers from server...</span></pre>
+                        <p class="proof-card-desc">These are the real HTTP headers your browser received when loading
+                            this page:</p>
+                        <pre class="proof-headers"
+                            id="proofHeaders"><span class="proof-loading">Fetching headers from server...</span></pre>
                     </div>
                     <div class="proof-card">
                         <h3 class="proof-card-title">How to verify</h3>
-                        <p class="proof-card-desc">Open your browser's DevTools (F12), go to the Network tab, click the first request, and check the response headers. You will see:</p>
+                        <p class="proof-card-desc">Open your browser's DevTools (F12), go to the Network tab, click the
+                            first request, and check the response headers. You will see:</p>
                         <div class="proof-verify">
                             <code>Server: Maulik-Bobby-Server/2.0</code>
                         </div>
-                        <p class="proof-card-desc">Every file on this page — <code>index.html</code>, <code>style.css</code>, <code>script.js</code> — was served through our custom C++ HTTP stack with zero-copy sendfile().</p>
+                        <p class="proof-card-desc">Every file on this page, <code>index.html</code>,
+                            <code>style.css</code>, <code>script.js</code>, was served through our custom C++ HTTP
+                            stack with zero-copy sendfile().
+                        </p>
                     </div>
                 </div>
             </div>
@@ -118,43 +136,68 @@
             <div class="section-header section-header--left">
                 <span class="section-tag">Architecture</span>
                 <h2 class="section-title">How it works under the hood</h2>
-                <p class="section-desc">Every design choice was made to minimize latency and maximize throughput without relying on third-party libraries.</p>
+                <p class="section-desc">Every design choice was made to minimize latency and maximize throughput without
+                    relying on third-party libraries.</p>
             </div>
             <div class="arch-grid">
                 <div class="arch-card arch-card--wide">
                     <div class="arch-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
                     </div>
                     <h3 class="arch-title">SO_REUSEPORT Multi-Threading</h3>
-                    <p class="arch-desc">Each worker thread creates its own listening socket bound to the same port. The Linux kernel distributes incoming connections across all threads with zero userspace locking on the hot path.</p>
+                    <p class="arch-desc">Each worker thread creates its own listening socket bound to the same port. The
+                        Linux kernel distributes incoming connections across all threads with zero userspace locking on
+                        the hot path.</p>
                 </div>
                 <div class="arch-card">
                     <div class="arch-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                        </svg>
                     </div>
                     <h3 class="arch-title">Zero-Copy sendfile()</h3>
-                    <p class="arch-desc">Static files are transferred directly from disk to socket via the sendfile() syscall, bypassing userspace memory entirely.</p>
+                    <p class="arch-desc">Static files are transferred directly from disk to socket via the sendfile()
+                        syscall, bypassing userspace memory entirely.</p>
                 </div>
                 <div class="arch-card">
                     <div class="arch-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
                     </div>
                     <h3 class="arch-title">Request Validation</h3>
-                    <p class="arch-desc">Enforces RFC 9112 Host header requirements and blocks path traversal attacks before any file system access.</p>
+                    <p class="arch-desc">Enforces RFC 9112 Host header requirements and blocks path traversal attacks
+                        before any file system access.</p>
                 </div>
                 <div class="arch-card">
                     <div class="arch-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
                     </div>
                     <h3 class="arch-title">Keep-Alive + TCP_NODELAY</h3>
-                    <p class="arch-desc">Persistent HTTP connections with Nagle's algorithm disabled for instant small-response delivery.</p>
+                    <p class="arch-desc">Persistent HTTP connections with Nagle's algorithm disabled for instant
+                        small-response delivery.</p>
                 </div>
                 <div class="arch-card">
                     <div class="arch-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
                     </div>
                     <h3 class="arch-title">Custom Router</h3>
-                    <p class="arch-desc">Register lambda-based API routes that take priority over static file serving. Simple map-based dispatch for O(log n) lookup.</p>
+                    <p class="arch-desc">Register lambda-based API routes that take priority over static file serving.
+                        Simple map-based dispatch for O(log n) lookup.</p>
                 </div>
             </div>
         </div>
@@ -166,48 +209,54 @@
             <div class="section-header section-header--left">
                 <span class="section-tag">Supported Methods</span>
                 <h2 class="section-title">Full CRUD over HTTP</h2>
-                <p class="section-desc">The server implements five standard HTTP methods, each with proper status codes and error handling.</p>
+                <p class="section-desc">The server implements five standard HTTP methods, each with proper status codes
+                    and error handling.</p>
             </div>
             <div class="methods-list">
                 <div class="method-row">
                     <div class="method-badge method-badge--get">GET</div>
                     <div class="method-info">
                         <h3 class="method-title">Serve Static Files</h3>
-                        <p class="method-desc">Returns the requested file from the root directory with correct MIME types. Uses sendfile() for zero-copy transfer.</p>
+                        <p class="method-desc">Returns the requested file from the root directory with correct MIME
+                            types. Uses sendfile() for zero-copy transfer.</p>
                     </div>
-                    <code class="method-example">curl http://localhost:3490/index.html</code>
+                    <code class="method-example">curl http(s)://serverurl/index.html</code>
                 </div>
                 <div class="method-row">
                     <div class="method-badge method-badge--post">POST</div>
                     <div class="method-info">
                         <h3 class="method-title">Create a New File</h3>
-                        <p class="method-desc">Writes the request body to a new file at the given path. Returns 409 if the file already exists.</p>
+                        <p class="method-desc">Writes the request body to a new file at the given path. Returns 409 if
+                            the file already exists.</p>
                     </div>
-                    <code class="method-example">curl -X POST -d "content" http://localhost:3490/new.txt</code>
+                    <code class="method-example">curl -X POST -d "content" http(s)://serverurl/new.txt</code>
                 </div>
                 <div class="method-row">
                     <div class="method-badge method-badge--patch">PATCH</div>
                     <div class="method-info">
                         <h3 class="method-title">Append to a File</h3>
-                        <p class="method-desc">Appends the request body to an existing file. Returns 404 if the file does not exist.</p>
+                        <p class="method-desc">Appends the request body to an existing file. Returns 404 if the file
+                            does not exist.</p>
                     </div>
-                    <code class="method-example">curl -X PATCH -d " more" http://localhost:3490/new.txt</code>
+                    <code class="method-example">curl -X PATCH -d " more" http(s)://serverurl/new.txt</code>
                 </div>
                 <div class="method-row">
                     <div class="method-badge method-badge--delete">DELETE</div>
                     <div class="method-info">
                         <h3 class="method-title">Remove a File</h3>
-                        <p class="method-desc">Deletes the file at the specified path. Only regular files can be deleted, not directories.</p>
+                        <p class="method-desc">Deletes the file at the specified path. Only regular files can be
+                            deleted, not directories.</p>
                     </div>
-                    <code class="method-example">curl -X DELETE http://localhost:3490/new.txt</code>
+                    <code class="method-example">curl -X DELETE http(s)://serverurl/new.txt</code>
                 </div>
                 <div class="method-row">
                     <div class="method-badge method-badge--head">HEAD</div>
                     <div class="method-info">
                         <h3 class="method-title">Inspect Headers</h3>
-                        <p class="method-desc">Returns identical headers to a GET request but with no response body. Useful for checking file existence.</p>
+                        <p class="method-desc">Returns identical headers to a GET request but with no response body.
+                            Useful for checking file existence.</p>
                     </div>
-                    <code class="method-example">curl -I http://localhost:3490/index.html</code>
+                    <code class="method-example">curl -I http(s)://serverurl/index.html</code>
                 </div>
             </div>
         </div>
@@ -219,7 +268,8 @@
             <div class="section-header section-header--left">
                 <span class="section-tag">Playground</span>
                 <h2 class="section-title">Hit the API, right now</h2>
-                <p class="section-desc">These buttons make live requests to the server serving this page. Watch the response come back in real-time.</p>
+                <p class="section-desc">These buttons make live requests to the server serving this page. Watch the
+                    response come back in real-time.</p>
             </div>
             <div class="playground-grid">
                 <div class="playground-card" id="playPing">
@@ -230,7 +280,11 @@
                     <p class="play-desc">Health check endpoint. Returns a simple JSON status.</p>
                     <button class="play-btn" id="btnPing">
                         Send Request
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </button>
                     <div class="play-response" id="resPing">
                         <div class="res-status"></div>
@@ -243,10 +297,15 @@
                         <div class="play-method play-method--get">GET</div>
                         <code class="play-route">/api/server-info</code>
                     </div>
-                    <p class="play-desc">Returns server metadata: name, version, supported methods, and available routes.</p>
+                    <p class="play-desc">Returns server metadata: name, version, supported methods, and available
+                        routes.</p>
                     <button class="play-btn" id="btnServerInfo">
                         Send Request
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </button>
                     <div class="play-response" id="resServerInfo">
                         <div class="res-status"></div>
@@ -262,7 +321,11 @@
                     <textarea class="play-input" id="echoInput" placeholder='{"your": "data here"}' rows="2"></textarea>
                     <button class="play-btn" id="btnEcho">
                         Send Request
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </button>
                     <div class="play-response" id="resEcho">
                         <div class="res-status"></div>
@@ -279,7 +342,8 @@
             <div class="section-header section-header--left">
                 <span class="section-tag">Benchmarks</span>
                 <h2 class="section-title">Performance at scale</h2>
-                <p class="section-desc">5,000 total requests across increasing concurrency levels. Our C++ server vs Apache httpd 2.4, measured with ApacheBench on localhost.</p>
+                <p class="section-desc">5,000 total requests across increasing concurrency levels. Our C++ server vs
+                    Apache httpd 2.4, measured with ApacheBench on localhost.</p>
             </div>
 
             <!-- Concurrency selector tabs -->
@@ -307,13 +371,39 @@
                         </div>
                     </div>
                     <table class="bench-table">
-                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Our Server</th>
+                                <th>Apache</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr><td>Mean Latency</td><td>0.604 ms</td><td>0.587 ms</td></tr>
-                            <tr><td>p50 Latency</td><td>1 ms</td><td>1 ms</td></tr>
-                            <tr><td>p95 Latency</td><td>1 ms</td><td>1 ms</td></tr>
-                            <tr><td>p99 Latency</td><td>2 ms</td><td>1 ms</td></tr>
-                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                            <tr>
+                                <td>Mean Latency</td>
+                                <td>0.604 ms</td>
+                                <td>0.587 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p50 Latency</td>
+                                <td>1 ms</td>
+                                <td>1 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p95 Latency</td>
+                                <td>1 ms</td>
+                                <td>1 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p99 Latency</td>
+                                <td>2 ms</td>
+                                <td>1 ms</td>
+                            </tr>
+                            <tr>
+                                <td>Failed Requests</td>
+                                <td class="bench-zero">0</td>
+                                <td class="bench-zero">0</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -323,7 +413,8 @@
                     <div class="bench-comparison">
                         <div class="bench-col">
                             <div class="bench-col-label bench-col-label--ours">Our Server</div>
-                            <div class="bench-big-number bench-big-number--winner">20,949<span class="bench-unit">req/s</span></div>
+                            <div class="bench-big-number bench-big-number--winner">20,949<span
+                                    class="bench-unit">req/s</span></div>
                         </div>
                         <div class="bench-vs">vs</div>
                         <div class="bench-col">
@@ -332,13 +423,39 @@
                         </div>
                     </div>
                     <table class="bench-table">
-                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Our Server</th>
+                                <th>Apache</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr><td>Mean Latency</td><td class="bench-winner">2.387 ms</td><td>2.642 ms</td></tr>
-                            <tr><td>p50 Latency</td><td class="bench-winner">2 ms</td><td>3 ms</td></tr>
-                            <tr><td>p95 Latency</td><td>3 ms</td><td>3 ms</td></tr>
-                            <tr><td>p99 Latency</td><td>5 ms</td><td>3 ms</td></tr>
-                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                            <tr>
+                                <td>Mean Latency</td>
+                                <td class="bench-winner">2.387 ms</td>
+                                <td>2.642 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p50 Latency</td>
+                                <td class="bench-winner">2 ms</td>
+                                <td>3 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p95 Latency</td>
+                                <td>3 ms</td>
+                                <td>3 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p99 Latency</td>
+                                <td>5 ms</td>
+                                <td>3 ms</td>
+                            </tr>
+                            <tr>
+                                <td>Failed Requests</td>
+                                <td class="bench-zero">0</td>
+                                <td class="bench-zero">0</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -348,7 +465,8 @@
                     <div class="bench-comparison">
                         <div class="bench-col">
                             <div class="bench-col-label bench-col-label--ours">Our Server</div>
-                            <div class="bench-big-number bench-big-number--winner">20,430<span class="bench-unit">req/s</span></div>
+                            <div class="bench-big-number bench-big-number--winner">20,430<span
+                                    class="bench-unit">req/s</span></div>
                         </div>
                         <div class="bench-vs">vs</div>
                         <div class="bench-col">
@@ -357,13 +475,39 @@
                         </div>
                     </div>
                     <table class="bench-table">
-                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Our Server</th>
+                                <th>Apache</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr><td>Mean Latency</td><td class="bench-winner">4.895 ms</td><td>5.455 ms</td></tr>
-                            <tr><td>p50 Latency</td><td class="bench-winner">2 ms</td><td>5 ms</td></tr>
-                            <tr><td>p95 Latency</td><td class="bench-winner">5 ms</td><td>6 ms</td></tr>
-                            <tr><td>p99 Latency</td><td>12 ms</td><td>8 ms</td></tr>
-                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                            <tr>
+                                <td>Mean Latency</td>
+                                <td class="bench-winner">4.895 ms</td>
+                                <td>5.455 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p50 Latency</td>
+                                <td class="bench-winner">2 ms</td>
+                                <td>5 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p95 Latency</td>
+                                <td class="bench-winner">5 ms</td>
+                                <td>6 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p99 Latency</td>
+                                <td>12 ms</td>
+                                <td>8 ms</td>
+                            </tr>
+                            <tr>
+                                <td>Failed Requests</td>
+                                <td class="bench-zero">0</td>
+                                <td class="bench-zero">0</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -373,7 +517,8 @@
                     <div class="bench-comparison">
                         <div class="bench-col">
                             <div class="bench-col-label bench-col-label--ours">Our Server</div>
-                            <div class="bench-big-number bench-big-number--winner">21,134<span class="bench-unit">req/s</span></div>
+                            <div class="bench-big-number bench-big-number--winner">21,134<span
+                                    class="bench-unit">req/s</span></div>
                         </div>
                         <div class="bench-vs">vs</div>
                         <div class="bench-col">
@@ -382,21 +527,50 @@
                         </div>
                     </div>
                     <table class="bench-table">
-                        <thead><tr><th>Metric</th><th>Our Server</th><th>Apache</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Our Server</th>
+                                <th>Apache</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr><td>Mean Latency</td><td class="bench-winner">9.463 ms</td><td>11.925 ms</td></tr>
-                            <tr><td>p50 Latency</td><td class="bench-winner">3 ms</td><td>11 ms</td></tr>
-                            <tr><td>p95 Latency</td><td class="bench-winner">4 ms</td><td>14 ms</td></tr>
-                            <tr><td>p99 Latency</td><td class="bench-winner">9 ms</td><td>15 ms</td></tr>
-                            <tr><td>Failed Requests</td><td class="bench-zero">0</td><td class="bench-zero">0</td></tr>
+                            <tr>
+                                <td>Mean Latency</td>
+                                <td class="bench-winner">9.463 ms</td>
+                                <td>11.925 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p50 Latency</td>
+                                <td class="bench-winner">3 ms</td>
+                                <td>11 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p95 Latency</td>
+                                <td class="bench-winner">4 ms</td>
+                                <td>14 ms</td>
+                            </tr>
+                            <tr>
+                                <td>p99 Latency</td>
+                                <td class="bench-winner">9 ms</td>
+                                <td>15 ms</td>
+                            </tr>
+                            <tr>
+                                <td>Failed Requests</td>
+                                <td class="bench-zero">0</td>
+                                <td class="bench-zero">0</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
             </div>
 
-            <p class="bench-footnote">At low concurrency (c=10), both servers perform similarly. As concurrency increases, our C++ server pulls ahead — at c=200 it delivers 26% more throughput with 3.6x lower p50 latency. Zero failed requests across all runs for both servers.</p>
-            <p class="bench-footnote bench-specs">Benchmark system: Intel i7-1185G7 @ 3.00 GHz, 16 GB RAM. Apache httpd running with default configuration. Both servers on the same machine, logging disabled.</p>
+            <p class="bench-footnote">At low concurrency (c=10), both servers perform similarly. As concurrency
+                increases, our C++ server pulls ahead at c=200 it delivers 26% more throughput with 3.6x lower p50
+                latency. Zero failed requests across all runs for both servers.</p>
+            <p class="bench-footnote bench-specs">Benchmark system: Intel i7-1185G7 @ 3.00 GHz, 16 GB RAM. Apache httpd
+                running with default configuration. Both servers on the same machine, logging disabled.</p>
         </div>
     </section>
 
@@ -405,7 +579,8 @@
         <div class="footer-inner">
             <div class="footer-proof">
                 <span class="live-dot"></span>
-                <span>Served by <strong>Maulik-Bobby-Server/2.0</strong> on port <span id="footerPort">3490</span></span>
+                <span>Served by <strong>Maulik-Bobby-Server/2.0</strong> on port <span
+                        id="footerPort">3490</span></span>
             </div>
             <div class="footer-meta">
                 <span>Response headers include <code>Server: Maulik-Bobby-Server/2.0</code></span>
@@ -415,7 +590,7 @@
                 <span class="footer-sep">|</span>
                 <span>Linux Socket APIs</span>
                 <span class="footer-sep">|</span>
-                <span>PR1103 Minor Project</span>
+                <span>Lightweight HTTP Server</span>
             </div>
         </div>
     </footer>
