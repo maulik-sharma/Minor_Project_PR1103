@@ -1,0 +1,39 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag http-server:latest
+
+    - name: Run the container
+      run: |
+        docker run -d -p 3490:3490 --name test-server http-server:latest
+        
+        # Wait a moment for the server to start
+        sleep 2
+
+    - name: Test the server health
+      run: |
+        # Ping the health check endpoint
+        curl -f http://localhost:3490/api/ping
+
+    - name: Test serving static content
+      run: |
+        # Fetch the index page
+        curl -f http://localhost:3490/index.html
+
+    - name: View container logs on failure
+      if: failure()
+      run: docker logs test-server

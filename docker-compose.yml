@@ -1,0 +1,10 @@
+services:
+  server:
+    image: ghcr.io/maulik-sharma/http-server:latest
+    container_name: http-server
+    ports:
+      - "3490:3490"
+    restart: unless-stopped
+    # Optional: Map a local directory to serve different content during development
+    # volumes:
+    #   - ./content:/app/content

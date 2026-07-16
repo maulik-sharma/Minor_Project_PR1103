@@ -1,2 +1,4 @@
 .vscode
 .agents
+server
+test/results/*.txt
