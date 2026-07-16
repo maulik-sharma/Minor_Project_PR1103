@@ -1,3 +1,0 @@
-# Results are generated here by run_ab.sh
-# ours.txt   — our C++ server ab output
-# python.txt — python http.server ab output

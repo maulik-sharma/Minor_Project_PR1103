@@ -30,38 +30,7 @@
 
     revealElements.forEach((el) => revealObserver.observe(el));
 
-    // ---- Server Proof: Fetch actual response headers ----
-    (async function fetchProofHeaders() {
-        const proofEl = document.getElementById("proofHeaders");
-        if (!proofEl) return;
 
-        try {
-            // Fetch the current page itself so we can inspect the response headers
-            const res = await fetch(window.location.href, { method: "HEAD" });
-
-            let html = "";
-            const highlightKeys = ["server", "content-type", "content-length", "date", "connection"];
-
-            res.headers.forEach((value, key) => {
-                const isServer = key.toLowerCase() === "server";
-                const keySpan = `<span class="header-key">${escapeHtml(key)}</span>`;
-                const valueSpan = isServer
-                    ? `<span class="header-server">${escapeHtml(value)}</span>`
-                    : escapeHtml(value);
-                html += `${keySpan}: ${valueSpan}\n`;
-            });
-
-            if (html === "") {
-                // Some browsers restrict header visibility — show what we can
-                html = `<span class="header-key">server</span>: <span class="header-server">Maulik-Bobby-Server/2.0</span>\n`;
-                html += `<span class="header-key">(some headers hidden by browser CORS policy)</span>\n`;
-            }
-
-            proofEl.innerHTML = html.trimEnd();
-        } catch (err) {
-            proofEl.innerHTML = `<span class="proof-loading">Could not fetch headers: ${escapeHtml(err.message)}</span>`;
-        }
-    })();
 
     // ---- Playground API Calls ----
 

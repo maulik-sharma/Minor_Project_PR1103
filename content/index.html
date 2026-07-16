@@ -18,12 +18,6 @@
 </head>
 
 <body>
-    <!-- Live server banner -->
-    <div class="live-banner" id="liveBanner">
-        <span class="live-dot"></span>
-        <span class="live-text">Served from <strong>Maulik-Bobby-Server/2.0</strong></span>
-    </div>
-
     <!-- Navigation -->
     <nav class="nav" id="mainNav">
         <div class="nav-inner">
@@ -55,7 +49,7 @@
                     C++17 / Linux Sockets / HTTP 1.1
                 </div>
                 <h1 class="hero-title">
-                    High-Performance<br>
+                    Lightweight Custom<br>
                     <span class="hero-accent">HTTP Server</span>
                 </h1>
                 <p class="hero-desc">
@@ -94,43 +88,6 @@
         </div>
     </section>
 
-    <!-- Server Proof Section -->
-    <section class="section server-proof-section" id="serverProof">
-        <div class="section-inner">
-            <div class="proof-box">
-                <div class="proof-header">
-                    <span class="live-dot live-dot--lg"></span>
-                    <div>
-                        <h2 class="proof-title">You are viewing this page live from our C++ server</h2>
-                        <p class="proof-subtitle">This HTML, CSS, and JavaScript were delivered to your browser by
-                            <strong>Maulik-Bobby-Server/2.0</strong>
-                        </p>
-                    </div>
-                </div>
-                <div class="proof-details">
-                    <div class="proof-card">
-                        <h3 class="proof-card-title">Actual Response Headers</h3>
-                        <p class="proof-card-desc">These are the real HTTP headers your browser received when loading
-                            this page:</p>
-                        <pre class="proof-headers"
-                            id="proofHeaders"><span class="proof-loading">Fetching headers from server...</span></pre>
-                    </div>
-                    <div class="proof-card">
-                        <h3 class="proof-card-title">How to verify</h3>
-                        <p class="proof-card-desc">Open your browser's DevTools (F12), go to the Network tab, click the
-                            first request, and check the response headers. You will see:</p>
-                        <div class="proof-verify">
-                            <code>Server: Maulik-Bobby-Server/2.0</code>
-                        </div>
-                        <p class="proof-card-desc">Every file on this page, <code>index.html</code>,
-                            <code>style.css</code>, <code>script.js</code>, was served through our custom C++ HTTP
-                            stack with zero-copy sendfile().
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Architecture Section -->
     <section class="section" id="architecture">
@@ -576,17 +533,9 @@
         </div>
     </section>
 
-    <!-- Server proof footer -->
+    <!-- Server footer -->
     <footer class="footer" id="footer">
         <div class="footer-inner">
-            <div class="footer-proof">
-                <span class="live-dot"></span>
-                <span>Served by <strong>Maulik-Bobby-Server/2.0</strong> on port <span
-                        id="footerPort">3490</span></span>
-            </div>
-            <div class="footer-meta">
-                <span>Response headers include <code>Server: Maulik-Bobby-Server/2.0</code></span>
-            </div>
             <div class="footer-links">
                 <span>Built with C++17</span>
                 <span class="footer-sep">|</span>
