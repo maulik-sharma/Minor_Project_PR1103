@@ -1056,6 +1056,14 @@ code {
         display: none;
     }
 
+    .hide-mobile {
+        display: none;
+    }
+
+    .live-banner {
+        font-size: 0.75rem;
+    }
+
     .hero-inner {
         grid-template-columns: 1fr;
         gap: 40px;
