@@ -1,0 +1,6 @@
+server
+server.exe
+*.o
+.git
+.github
+.agents

@@ -2,3 +2,4 @@
 .agents
 server
 test/results/*.txt
+*.o

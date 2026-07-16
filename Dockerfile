@@ -10,10 +10,10 @@ WORKDIR /app
 COPY . .
 
 # Build the server using the Makefile
-RUN make
+RUN make clean && make
 
 # Stage 2: Create the lightweight runtime image
-FROM alpine:3.19
+FROM alpine:3.24
 
 # Install runtime dependencies for C++ binaries
 RUN apk add --no-cache libstdc++ libgcc
