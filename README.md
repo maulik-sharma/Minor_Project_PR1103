@@ -3,6 +3,8 @@
 A custom HTTP/1.1 server written in C++ using Linux socket APIs.  
 Supports static file serving, keep-alive connections, and full CRUD operations via HTTP methods.
 
+Demo: https://httpserver.mauliksharma.org
+
 ## Requirements
 
 - Linux (tested on Fedora)
